@@ -123,8 +123,11 @@ public class TestResultSets {
 		CandidateResult r12 = new CandidateResult(9);
 		r12.updateScore(10d);
 		
-		
-		CandidateResultSet c = new CandidateResultSet(Arrays.asList(r11, r12));
+		//build it sorted
+		CandidateResultSet c = new CandidateResultSet(Arrays.asList(r12, r11));
+		//now reverse the scores
+		c.getScores()[0] = 5;
+		c.getScores()[0] = 10;
 		c.sort();
 		ResultSet r1 = c.getResultSet(0, 2);
 		assertEquals(9, r1.getDocids()[0]);
@@ -151,7 +154,9 @@ public class TestResultSets {
 		r12.updateScore(-10d);
 		
 		
-		CandidateResultSet c = new CandidateResultSet(Arrays.asList(r11, r12));
+		CandidateResultSet c = new CandidateResultSet(Arrays.asList(r12, r11));
+		c.getScores()[0] = -15;
+		c.getScores()[0] = -10;
 		c.sort();
 		ResultSet r1 = c.getResultSet(0, 2);
 		ResultSet r2 = r1.getResultSet(0, 2);

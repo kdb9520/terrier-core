@@ -31,8 +31,10 @@ import it.unimi.dsi.fastutil.longs.LongHeapPriorityQueue;
 import it.unimi.dsi.fastutil.longs.LongPriorityQueue;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.stream.Collectors;
 
 import org.terrier.matching.BaseMatching;
 import org.terrier.matching.MatchingQueryTerms;
@@ -189,7 +191,16 @@ public class Full extends BaseMatching
 
 	protected CandidateResultSet makeResultSet(
 			final DAATFullMatchingState state,
-			final Queue<CandidateResult> candidateResultList) {
+			final Queue<CandidateResult> candidateResultQueue) {
+		
+				// Fully sort the result list (the PriorityQueue only guarantees the min element is at [0]).
+				// Note that sorting here is by descending score and then by ascending docid for stability reasons;
+				// the natural sort for CandidateResult is different (descending score then descending docid) for DAAT to work properly
+				final List<CandidateResult> candidateResultList = candidateResultQueue
+					.stream()
+					.filter( res -> res.getScore() != Double.NEGATIVE_INFINITY)
+					.sorted(CandidateResult.resultListComparator).collect(Collectors.toList());
+		
                 return new CandidateResultSet(candidateResultList);
 	}
 

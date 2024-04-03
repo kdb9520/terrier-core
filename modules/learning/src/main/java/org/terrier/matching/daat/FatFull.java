@@ -28,8 +28,10 @@
 package org.terrier.matching.daat;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.terrier.matching.FatResultSet;
 import org.terrier.matching.PostingListManager;
@@ -88,7 +90,7 @@ public class FatFull extends Full {
 	@Override
 	protected CandidateResultSet makeResultSet(
 			DAATFullMatchingState state,
-			Queue<CandidateResult> candidateResultList) 
+			Queue<CandidateResult> candidateResultQueue) 
 	{
 		PostingListManager plm = state.plm;
 		int terms = plm.getNumTerms();
@@ -105,6 +107,14 @@ public class FatFull extends Full {
 			tags[i] = plm.getTags(i);
 			logger.info("term " + queryTerms[i] + " ks="+keyFreqs[i] + " es=" + entryStats[i] + " tag="+tags[i]);
 		}
+
+		// Fully sort the result list (the PriorityQueue only guarantees the min element is at [0]).
+		// Note that sorting here is by descending score and then by ascending docid for stability reasons;
+		// the natural sort for CandidateResult is different (descending score then descending docid) for DAAT to work properly
+		final List<CandidateResult> candidateResultList = candidateResultQueue
+			.stream()
+			.filter( res -> res.getScore() != Double.NEGATIVE_INFINITY)
+			.sorted(CandidateResult.resultListComparator).collect(Collectors.toList());
 		
 		FatCandidateResultSet rtr = new FatCandidateResultSet(candidateResultList, super.collectionStatistics, queryTerms, entryStats, keyFreqs, tags);
 		assert rtr.verify() : "FatCandidateResultSet failed verification";

@@ -67,37 +67,16 @@ public class FatCandidateResultSet extends CandidateResultSet implements Writabl
 		super();
 	}	
 	
-	public FatCandidateResultSet(Collection<CandidateResult> _q, CollectionStatistics cs, String[] queryTerms, EntryStatistics[] entryStats, double[] keyFrequency, Set<String>[] tags) {
-		super(_q);
-		
+	@Deprecated
+	public FatCandidateResultSet(List<CandidateResult> q, CollectionStatistics cs, String[] queryTerms, EntryStatistics[] entryStats, double[] keyFrequency, Set<String>[] tags) {
+		super(q);
 		this.queryTerms = queryTerms;
 		this.entryStats = entryStats;
 		this.keyFrequency = keyFrequency;
 		this.collStats = cs;
 		this.tags = tags;
 		int i=0;
-		Collection<CandidateResult> q = _q.stream().filter( res -> res.getScore() != Double.NEGATIVE_INFINITY).sorted(CandidateResult.resultListComparator).collect(Collectors.toList());
-		postings = new WritablePosting[q.size()][];
-		for (CandidateResult cc: q)
-		{
-			postings[i] = ((FatCandidateResult) cc).getPostings();
-			assert verify(postings[i], cc.getDocId()) : "FatCandidateResult at position " + i + " had an id mismatch";
-			i++;
-		}
-	}
 
-	@SuppressWarnings("unchecked")
-	@Deprecated
-	public FatCandidateResultSet(List<CandidateResult> _q, CollectionStatistics cs, String[] queryTerms, EntryStatistics[] entryStats, double[] keyFrequency) {
-		super(_q);
-		this.queryTerms = queryTerms;
-		this.entryStats = entryStats;
-		this.keyFrequency = keyFrequency;
-		this.collStats = cs;
-		this.tags = new Set[queryTerms.length];
-		int i=0;
-
-		Collection<CandidateResult> q = _q.stream().filter( res -> res.getScore() != Double.NEGATIVE_INFINITY).sorted(CandidateResult.resultListComparator).collect(Collectors.toList());
 		postings = new WritablePosting[q.size()][];
 		for (CandidateResult cc: q)
 		{

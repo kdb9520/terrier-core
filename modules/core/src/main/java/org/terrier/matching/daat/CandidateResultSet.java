@@ -101,7 +101,8 @@ public class CandidateResultSet implements ResultSet, Serializable
 			occurrences[i] = cc.getOccurrence();
 			
 			// check all scores are not -inf, and are either descending, or equal with ties broken by docid
-			assert (scores[i] != Double.NEGATIVE_INFINITY) && (scores[i] <= lastScore || (scores[i] == lastScore && docids[i-1] < docids[i]) );
+			assert (scores[i] != Double.NEGATIVE_INFINITY) && (scores[i] <= lastScore || (scores[i] == lastScore && docids[i-1] < docids[i]) ) : 
+				"position " + i +" score " + scores[i] + "lastScore" + lastScore + " this docid " + docids[i] + " last docid" + docids[i-1]; 
 			lastScore = scores[i];
 
 			i++;

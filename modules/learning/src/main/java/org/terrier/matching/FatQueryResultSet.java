@@ -144,6 +144,7 @@ public class FatQueryResultSet extends QueryResultSet implements FatResultSet {
 				System.arraycopy(this.metadata[i], 0, resultSet.metadata[i], 0, length);
 			}
 		}
+		assert this.verify() : "new FatQueryResultSet failed verification";
 		return resultSet;
 	}
 

@@ -106,7 +106,9 @@ public class FatFull extends Full {
 			logger.info("term " + queryTerms[i] + " ks="+keyFreqs[i] + " es=" + entryStats[i] + " tag="+tags[i]);
 		}
 		
-		return new FatCandidateResultSet(candidateResultList, super.collectionStatistics, queryTerms, entryStats, keyFreqs, tags);
+		FatCandidateResultSet rtr = new FatCandidateResultSet(candidateResultList, super.collectionStatistics, queryTerms, entryStats, keyFreqs, tags);
+		assert rtr.verify() : "FatCandidateResultSet failed verification";
+		return rtr;
 	}
 	
 	@Override

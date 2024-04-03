@@ -51,6 +51,7 @@ public class FatCandidateResult extends CandidateResult {
 	
 	public void setPosting(int term, WritablePosting p) {
 		postings[term] = p;
+		assert p.getId() == getDocId() : "invalid posting assinged for " + getDocId() + " at term " + term + ", found " + p.getId(); // the posting should have the same id.
 	}
 
 	public WritablePosting[] getPostings() {

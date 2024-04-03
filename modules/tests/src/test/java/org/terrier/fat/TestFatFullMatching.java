@@ -192,20 +192,21 @@ public class TestFatFullMatching extends TestMatching {
 		assertEquals(numTerms, postings.length); //how many in Postings here?
 		for(int i=0;i<rs.getResultSize();i++) {
 			for(int j=0;j<numTerms;j++) {
-				assertEquals(rs.getDocids()[i], postings[i][j].getId());
+				if (postings[i][j] != null)
+					assertEquals(rs.getDocids()[i], postings[i][j].getId());
 			}
 		}
-		assertEquals(0, postings[0][0].getId());
+		assertEquals(rs.getDocids()[0], postings[0][0].getId());
 		assertEquals(1, postings[0][0].getFrequency());
-		assertEquals(9, postings[0][0].getDocumentLength());
-		assertNull(postings[0][1]);
-		assertEquals(2, postings.length);
-		assertEquals(1, postings[1][0].getId());
+		assertEquals(8, postings[0][0].getDocumentLength());
+		assertEquals(1, postings[0][1].getId());
+		assertEquals(1, postings[0][1].getFrequency());
+		assertEquals(8, postings[0][1].getDocumentLength());
+		
+		assertEquals(rs.getDocids()[1], postings[1][0].getId());
 		assertEquals(1, postings[1][0].getFrequency());
-		assertEquals(8, postings[1][0].getDocumentLength());
-		assertEquals(1, postings[1][1].getId());
-		assertEquals(1, postings[1][1].getFrequency());
-		assertEquals(8, postings[1][1].getDocumentLength());
+		assertEquals(9, postings[1][0].getDocumentLength());
+		assertNull(postings[1][1]);
 	}
 
 	

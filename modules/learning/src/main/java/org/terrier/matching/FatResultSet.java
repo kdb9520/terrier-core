@@ -72,4 +72,25 @@ public interface FatResultSet extends ResultSet, Writable {
 	void setDocids(int[] ds);
 	void setOccurrences(short[] os);
 	void setScores(double[] ss);
+
+	/** checks that postings have ids corresponding to their correct position */
+	public default boolean verify() {
+		final int[] docids = getDocids();
+		final var postings = getPostings();
+		for(int i=0;i<docids.length;i++)
+		{
+			int docid = docids[i];
+			for(int j=0;j<postings[i].length;j++)
+				if (postings[i][j] != null)
+				{
+					if (postings[i][j].getId() != docid) {
+						System.err.println("FatResultSet verification failed at position" + i 
+							+ " - expected docid " + docid + " but found id " + postings[i][j].getId() + " for term " + j);
+						return false;
+					}
+					
+				}
+		}
+		return true;
+	}
 }

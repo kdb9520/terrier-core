@@ -86,8 +86,10 @@ public class TestFatFullMatching extends TestMatching {
 		assertEquals(0, rs.getDocids()[0]);
 		assertTrue(rs.getScores()[0] > 0);
 		
-		//now check FatIndex.
+		FatResultSet frs = (FatResultSet)rs;
+		assertEquals(0, frs.getPostings()[0][0].getId());
 		
+		//now check FatIndex		
 		Index fatIndex = FatUtils.makeIndex((FatResultSet)rs);
 		assertEquals( index.getCollectionStatistics().getNumberOfDocuments(), fatIndex.getCollectionStatistics().getNumberOfDocuments());
 		assertEquals(index.getCollectionStatistics().getNumberOfFields(), fatIndex.getCollectionStatistics().getNumberOfFields());
@@ -143,44 +145,67 @@ public class TestFatFullMatching extends TestMatching {
 	{
 		ResultSet rs = super._testTwoDocumentsIndexMatching();
 		assertTrue(rs instanceof FatCandidateResultSet);
-		Posting[] postings = ((FatCandidateResultSet)rs).getPostings()[0];
-		assertEquals(1, postings.length); //how many in Postings here?
+		Posting[][] postings = ((FatCandidateResultSet)rs).getPostings();
+		final int numTerms = 1;
+		assertEquals(numTerms, postings[0].length); //how many in Postings here?
+		for(int i=0;i<rs.getResultSize();i++) {
+			for(int j=0;j<numTerms;j++) {
+				assertEquals(rs.getDocids()[i], postings[i][j].getId());
+			}
+		}
 	}
 	
 	@Test public void testThreeDocumentsSynonymIndexMatching() throws Exception
 	{
 		ResultSet rs = super._testThreeDocumentsSynonymIndexMatching();
 		assertTrue(rs instanceof FatCandidateResultSet);
-		Posting[] postings = ((FatCandidateResultSet)rs).getPostings()[0];
-		assertEquals(1, postings.length); //how many in Postings here?
+		Posting[][] postings = ((FatCandidateResultSet)rs).getPostings();
+		final int numTerms = 1;
+		assertEquals(numTerms, postings[0].length); //how many in Postings here?
+		for(int i=0;i<rs.getResultSize();i++) {
+			for(int j=0;j<numTerms;j++) {
+				assertEquals(rs.getDocids()[i], postings[i][j].getId());
+			}
+		}
 	}
 
 	@Test public void testMatchingNonStatisticsOverwrite() throws Exception
 	{
 		ResultSet rs = super._testMatchingNonStatisticsOverwrite();
 		assertTrue(rs instanceof FatCandidateResultSet);
-		Posting[] postings = ((FatCandidateResultSet)rs).getPostings()[0];
-		assertEquals(1, postings.length);
+		Posting[][] postings = ((FatCandidateResultSet)rs).getPostings();
+		final int numTerms = 1;
+		assertEquals(numTerms, postings.length); //how many in Postings here?
+		for(int i=0;i<rs.getResultSize();i++) {
+			for(int j=0;j<numTerms;j++) {
+				assertEquals(rs.getDocids()[i], postings[i][j].getId());
+			}
+		}
 	}
 	
 	@Test public void testTwoDocumentsTwoTerms() throws Exception
 	{
 		ResultSet rs = super._testTwoDocumentsTwoTerms();
 		assertTrue(rs instanceof FatCandidateResultSet);
-		Posting[] postings = ((FatCandidateResultSet)rs).getPostings()[0];
+		Posting[][] postings = ((FatCandidateResultSet)rs).getPostings();
+		final int numTerms = 2;
+		assertEquals(numTerms, postings.length); //how many in Postings here?
+		for(int i=0;i<rs.getResultSize();i++) {
+			for(int j=0;j<numTerms;j++) {
+				assertEquals(rs.getDocids()[i], postings[i][j].getId());
+			}
+		}
+		assertEquals(0, postings[0][0].getId());
+		assertEquals(1, postings[0][0].getFrequency());
+		assertEquals(9, postings[0][0].getDocumentLength());
+		assertNull(postings[0][1]);
 		assertEquals(2, postings.length);
-		assertEquals(0, postings[0].getId());
-		assertEquals(1, postings[0].getFrequency());
-		assertEquals(9, postings[0].getDocumentLength());
-		assertNull(postings[1]);
-		postings = ((FatCandidateResultSet)rs).getPostings()[1];
-		assertEquals(2, postings.length);
-		assertEquals(1, postings[0].getId());
-		assertEquals(1, postings[0].getFrequency());
-		assertEquals(8, postings[0].getDocumentLength());
-		assertEquals(1, postings[1].getId());
-		assertEquals(1, postings[1].getFrequency());
-		assertEquals(8, postings[1].getDocumentLength());
+		assertEquals(1, postings[1][0].getId());
+		assertEquals(1, postings[1][0].getFrequency());
+		assertEquals(8, postings[1][0].getDocumentLength());
+		assertEquals(1, postings[1][1].getId());
+		assertEquals(1, postings[1][1].getFrequency());
+		assertEquals(8, postings[1][1].getDocumentLength());
 	}
 
 	

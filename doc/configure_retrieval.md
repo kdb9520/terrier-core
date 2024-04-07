@@ -46,7 +46,7 @@ Single-line topic files have a simpler format, without the additional descriptio
 1. a few query terms
 2. some different query terms
 
-Support for single-line topic files is provided by the SingleLineTRECQuery class. To use a topics file in this format, you must firstly set `trec.topics.parser=SingleLineTRECQuery`. The `batchretrieval` command has a handy `-s` command line argument that has the same effect:
+Support for single-line topic files is provided by the SingleLineTRECQuery class. To use a topics file in this format, you must firstly set `trec.topics.parser=SingleLineTRECQuery`. The `batchretrieve` command has a handy `-s` command line argument that has the same effect:
 
 	bin/terrier batchretrieve -s
 
@@ -54,7 +54,7 @@ Support for single-line topic files is provided by the SingleLineTRECQuery class
 
 ## Weighting Models and Parameters
 
-Next, we need to specify which of the available weighting models we will use for assigning scores to the retrieved documents. We do this by specifying the name of the corresponding model class in the property `trec.model`. E.g. `trec.model=PL2`, or using the `-w` option to the `batchretreve` command, e.g. `bin/terrier batchretrieve -w PL2`.
+Next, we need to specify which of the available weighting models we will use for assigning scores to the retrieved documents. We do this by specifying the name of the corresponding model class in the property `trec.model`. E.g. `trec.model=PL2`, or using the `-w` option to the `batchretrieve` command, e.g. `bin/terrier batchretrieve -w PL2`.
 
 Terrier provides implementations of many weighting models (see [org.terrier.matching.models](http://terrier.org/docs/current/javadoc/org/terrier/matching/models/package-summary.html) for the full list). In particular, some of the notable weighting models implemented include many from the [Divergence from Randomness (DFR) framework](dfr_description.md), among others:
 
@@ -117,7 +117,7 @@ To use a field-based model, you have to index using fields. See [Configuring Ind
 
 Different field-based models have different parameters, as controlled by various properties. These generally include weights for each field, namely `w.0`, `w.1`, etc. Per-field normalisation models, such as BM25F and PL2F also require the normalisation parameters for each field, namely `c.0`, `c.1`, and so on. To run with a field-based model:
 
-    bin/terrier batchretrieval -w PL2F -Dc.0=1.0 -Dc.1=2.3 -Dc.3=40 -Dw.0=4 -Dw.1=2 -Dw.3=25
+    bin/terrier batchretrieve -w PL2F -Dc.0=1.0 -Dc.1=2.3 -Dc.3=40 -Dw.0=4 -Dw.1=2 -Dw.3=25
 
 For improved efficiency of field-based weighting models, it is recommended that you manually alter the `data.properties` file of your index to change the DocumentIndex implementation in use, by updating it to read `index.document.class=org.terrier.structures.FSAFieldDocumentIndex`.
 
@@ -134,7 +134,7 @@ Two dependence models are included:
 
 To enable the dependence models, use the `matching.dsms` property. E.g. :
 
-    bin/terrier batchretrieval -Dmatching.dsms=DFRDependenceScoreModifier
+    bin/terrier batchretrieve -Dmatching.dsms=DFRDependenceScoreModifier
 
 The dependence models have various parameters to set. For more information, see the classes themselves.
 
@@ -143,11 +143,11 @@ Document Prior Features
 
 Terrier can easily integrate a query-independent document feature (or prior) into your retrieval model. The simplest way to do this is using [SimpleStaticScoreModifier](http://terrier.org/docs/current/javadoc/org/terrier/matching/dsms/SimpleStaticScoreModifier.html). For instance, say you generate a feature for all documents in the collection (e.g. using link analysis). You should export your file in one of the formats supported by SimpleStaticScoreModifier, e.g. feature value for each document, one per line. You can then add the feature as:
 
-    bin/terrier batchretrieval -Dmatching.dsms=SimpleStaticScoreModifier -Dssa.input.file=/path/to/feature -Dssa.input.type=listofscores -Dssa.w=0.5
+    bin/terrier batchretrieve -Dmatching.dsms=SimpleStaticScoreModifier -Dssa.input.file=/path/to/feature -Dssa.input.type=listofscores -Dssa.w=0.5
 
 The property `ssa.w` controls the weight of your feature. For more information on the type of files supported, see [SimpleStaticScoreModifier](http://terrier.org/docs/current/javadoc/org/terrier/matching/dsms/SimpleStaticScoreModifier.html). Finally, Terrier can support multiple DSMs, using them in a comma-delimited manner:
 
-    bin/terrier batchretrieval -Dmatching.dsms=DFRDependenceScoreModifier,SimpleStaticScoreModifier -Dssa.input.file=/path/to/feature -Dssa.input.type=listofscores -Dssa.w=0.5
+    bin/terrier batchretrieve -Dmatching.dsms=DFRDependenceScoreModifier,SimpleStaticScoreModifier -Dssa.input.file=/path/to/feature -Dssa.input.type=listofscores -Dssa.w=0.5
 
 Query Expansion
 ---------------
@@ -158,11 +158,11 @@ In addition, there are two parameters that can be set for applying query expansi
 
 To retrieve from an indexed test collection, using query expansion, with the term frequency normalisation parameter equal to 1.0, we can type:
 
-    bin/terrier batchretrieval -q -c c:1.0
+    bin/terrier batchretrieve -q -c c:1.0
 
 Relevance feedback is also supported by Terrier, assuming that the relevant documents are listed in a TREC format qrels file. To use feedback documents in query expansion, change the [FeedbackSelector](http://terrier.org/docs/current/javadoc/org/terrier/querying/FeedbackSelector.html), as follows:
 
-    bin/terrier batchretrieval -q -Dqe.feedback.selector=RelevantOnlyFeedbackDocuments,RelevanceFeedbackSelector -Dqe.feedback.filename=/path/to/feedback/qrels
+    bin/terrier batchretrieve -q -Dqe.feedback.selector=RelevantOnlyFeedbackDocuments,RelevanceFeedbackSelector -Dqe.feedback.filename=/path/to/feedback/qrels
 
 Learning to Rank
 ----------------
@@ -205,4 +205,4 @@ Bibliography
 
 > Webpage: <http://terrier.org>  
 > Contact: [School of Computing Science](http://www.dcs.gla.ac.uk/)  
-> Copyright (C) 2004-2021 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
+> Copyright (C) 2004-2024 [University of Glasgow](http://www.gla.ac.uk/). All Rights Reserved.
